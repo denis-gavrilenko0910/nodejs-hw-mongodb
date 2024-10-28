@@ -53,7 +53,7 @@ export const setupServer = () => {
     });
   });
 
-  const port = Number(env('PORT', 3000));
+  const port = Number(env('PORT', 4000));
 
   app.listen(port, () => console.log(`Server is running at port ${port}`));
 };
