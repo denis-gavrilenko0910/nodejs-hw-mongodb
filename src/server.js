@@ -4,6 +4,8 @@ import pino from 'pino-http';
 import { env } from './utils/env.js';
 import * as contactServices from './services/contacts.js';
 
+const port = Number(env('PORT', 4000));
+
 export const setupServer = () => {
   const app = express();
   app.use(cors());
@@ -52,8 +54,6 @@ export const setupServer = () => {
       message: error.message,
     });
   });
-
-  const port = Number(env('PORT', 4000));
 
   app.listen(port, () => console.log(`Server is running at port ${port}`));
 };
