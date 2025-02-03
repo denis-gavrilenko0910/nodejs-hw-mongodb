@@ -1,6 +1,40 @@
 import ContactsCollection from '../db/models/Contact.js';
+import { calcuatePaginationData } from '../utils/calculatePagingationData.js';
+import { parseContactFilterParams } from '../utils/parseContactFilterParams.js';
 
-export const getContacts = () => ContactsCollection.find();
+export const getContacts = async ({
+  page = 1,
+  perPage = 10,
+  sortBy = '_id',
+  sortOrder = 'asc',
+  filter = {},
+}) => {
+  const skip = (page - 1) * perPage;
+  const parsedFilters = parseContactFilterParams(filter);
+
+  const query = {};
+  if (parsedFilters.isFavourite !== undefined) {
+    query.isFavourite = parsedFilters.isFavourite;
+  }
+
+  if (parsedFilters.contactType) {
+    query.contactType = parsedFilters.contactType;
+  }
+
+  const data = await ContactsCollection.find(query)
+
+    .skip(skip)
+    .limit(perPage)
+    .sort({
+      [sortBy]: sortOrder,
+    });
+  const totalItems = await ContactsCollection.countDocuments();
+  const paginationData = calcuatePaginationData({ totalItems, page, perPage });
+  return {
+    data,
+    ...paginationData,
+  };
+};
 
 export const getContactByID = (id) => ContactsCollection.findById(id);
 
@@ -14,9 +48,9 @@ export const updateContact = async ({ _id, payload, options = {} }) => {
       ...options,
       new: true,
       includeResultMetadata: true,
+      runValidators: true,
     },
   );
-  // console.log(rawResult);
 
   if (!rawResult || !rawResult.value) {
     return null;
@@ -27,5 +61,6 @@ export const updateContact = async ({ _id, payload, options = {} }) => {
   };
 };
 
-export const deleteContact = async (filter) =>
-  ContactsCollection.findOneAndDelete(filter);
+export const deleteContact = async (filter) => {
+  return await ContactsCollection.findOneAndDelete(filter);
+};
