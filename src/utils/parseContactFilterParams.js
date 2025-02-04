@@ -13,7 +13,6 @@ const parsedType = (type) => {
     return typeList.includes(type) ? type : undefined;
   }
 };
-console.log('contact type', parsedType);
 
 export const parseContactFilterParams = ({ isFavourite, contactType }) => {
   const parsedIsFavorite = parsedBoolean(isFavourite);
