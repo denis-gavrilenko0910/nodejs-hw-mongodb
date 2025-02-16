@@ -21,6 +21,9 @@ export const getContacts = async ({
     query.contactType = parsedFilters.contactType;
   }
 
+  if (filter.userId) {
+    query.userId = filter.userId;
+  }
   const data = await ContactsCollection.find(query)
 
     .skip(skip)
@@ -28,7 +31,8 @@ export const getContacts = async ({
     .sort({
       [sortBy]: sortOrder,
     });
-  const totalItems = await ContactsCollection.countDocuments();
+
+  const totalItems = await ContactsCollection.countDocuments(query);
   const paginationData = calcuatePaginationData({ totalItems, page, perPage });
   return {
     data,

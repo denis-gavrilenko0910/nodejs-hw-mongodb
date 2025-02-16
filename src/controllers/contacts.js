@@ -1,15 +1,20 @@
 import createHttpError from 'http-errors';
+
 import * as contactServices from '../services/contacts.js';
+
+import { parseContactFilterParams } from '../utils/parseContactFilterParams.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
+
 import { sortByList } from '../db/models/Contact.js';
-import { parseContactFilterParams } from '../utils/parseContactFilterParams.js';
 
 export const getContactsController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
 
   const { sortBy, sortOrder } = parseSortParams(req.query, sortByList);
   const filter = parseContactFilterParams(req.query);
+  const { _id: userId } = req.user;
+  filter.userId = userId;
 
   const data = await contactServices.getContacts({
     page,
@@ -44,7 +49,10 @@ export const getContactByIdController = async (req, res) => {
 };
 
 export const addContactController = async (req, res) => {
-  const data = await contactServices.addContact(req.body);
+  const { _id: userId } = req.user;
+
+  const data = await contactServices.addContact({ ...req.body, userId });
+
   res.status(201).json({
     status: 201,
     message: 'Contact successfully added',
@@ -64,7 +72,6 @@ export const upsertContactController = async (req, res) => {
   });
 
   const status = result.isNew ? 201 : 200;
-  console.log(status);
 
   res.status(status).json({
     status,

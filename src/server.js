@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 import { env } from './utils/env.js';
 
@@ -13,19 +14,10 @@ export const setupServer = () => {
   const app = express();
   app.use(cors());
   app.use(express.json());
+  app.use(cookieParser());
   // app.use(logger);
   app.use('/auth', authRouter);
-  console.log(authRouter);
 
-  // app._router.stack.forEach((middleware) => {
-  //   if (middleware.route) {
-  //     console.log(middleware.route);
-  //   } else if (middleware.name === 'router') {
-  //     middleware.handle.stack.forEach((route) => {
-  //       console.log(route.route);
-  //     });
-  //   }
-  // });
   app.use('/contacts', contactsRouter);
 
   app.use(notFoundHandler);

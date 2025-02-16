@@ -3,8 +3,6 @@ import { typeList } from '../constants/contacts.js';
 const parsedBoolean = (value) => {
   if (value === 'true') return true;
   if (value === 'false') return false;
-  console.log('value log', value);
-
   return parsedBoolean ? value : undefined;
 };
 
