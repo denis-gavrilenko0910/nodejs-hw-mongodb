@@ -60,7 +60,6 @@ export const refreshUserSession = async ({ sessionId, refreshToken }) => {
     _id: sessionId,
     refreshToken,
   });
-  // console.log(session._id);
 
   if (!session) {
     throw createHttpError(401, 'Session not found here');
@@ -72,7 +71,6 @@ export const refreshUserSession = async ({ sessionId, refreshToken }) => {
   await SessionCollection.deleteOne({ _id: session._id });
 
   const newSession = createSession();
-  console.log('обновлённая сессия:', newSession);
   return SessionCollection.create({
     userId: session.userId,
     ...newSession,
